@@ -4,6 +4,8 @@
    hosts: ubuntu
    vars:
      java_version: 11
+     group_name: tomcat
+     tomcat_version: 10.1.14
      
    tasks:
      - name: installing jdk
@@ -11,5 +13,17 @@
          name: "openjdk-{{ java_version }}-jdk"
          update_cache: yes
          state: present
+     - name: creating user tomcat
+       ansible.builtin.user:
+         name: tomcat
+         shell: /bin/false 
+         groups: "{{ group_name }}"
+     - name: downloading tomcat
+       ansible.builtin.get_url:
+         url: https://www-eu.apache.org/dist/tomcat/tomcat-{{ tomcat_version }}/bin/apache-tomcat-${{ tomcat_version }}.tar.gz
+         dest: "/tmp/apache-tomcat-${{ tomcat_version }}.tar.gz"
+
+     
+   
 
 
