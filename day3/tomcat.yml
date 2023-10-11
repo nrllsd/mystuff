@@ -1,0 +1,15 @@
+---
+ - name: tomcat_ubuntu
+   become: yes
+   hosts: ubuntu
+   vars:
+     java_version: 11
+     
+   tasks:
+     - name: installing jdk
+       ansible.builtin.apt:
+         name: "openjdk-{{ java_version }}-jdk"
+         update_cache: yes
+         state: present
+
+
