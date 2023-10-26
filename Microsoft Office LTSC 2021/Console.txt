@@ -1,0 +1,10 @@
+Microsoft Office LTSC 2021
+Credits: Armani Tube
+YouTube Channel: https://www.youtube.com/c/armanitube
+Follow Us on Instagram, Twitter, and Facebook! @armanitube
+
+
+-------Path-------
+Console:
+    setup /configure configuration.xml
+
