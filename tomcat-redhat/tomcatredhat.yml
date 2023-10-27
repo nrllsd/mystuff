@@ -1,0 +1,70 @@
+---
+ - name: tomcat
+   become: yes
+   hosts: Redhat
+   vars:
+    groupname: tomcat
+    username: tomcat
+    homedir: /opt/tomcat
+   tasks: 
+     - name: installing java
+       ansible.builtin.dnf:
+         name:
+           - openjdk
+         state: present
+     - name: creating group
+       ansible.builtin.group:
+         name: "{{ groupname }}"
+         state: present
+     - name: adding user to group
+       ansible.builtin.user: 
+         name: "{{ username }}"
+         shell: /bin/false
+         home: "{{ homedir }}"
+         group: "{{ groupname }}"
+     -  name: creating home dir
+        ansible.builtin.file:
+           path: "{{ homedir }}"
+           owner: "{{ username }}"
+           group: "{{ groupname }}"
+           mode: '0755'
+     - name: downloading tomcat
+       ansible.builtin.get_url:
+         url: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.70/bin/apache-tomcat-9.0.70.tar.gz 
+         dest: "{{ homedir }}"
+     - name: untar the file
+       ansible.builtin.unarchive:
+            src: "{{ homedir}}/apache-tomcat-9.0.70.tar.gz" 
+            dest: "{{ homedir }}"
+     - name: Create a symbolic link
+       ansible.builtin.file:
+         src: "{{ homedir }}/apache-tomcat-{{ tomcat_specific_version }}"
+         dest: "{{ homedir }}/latest"
+         owner: "{{ username }}"
+         group: "{{ groupname }}"
+         state: link
+     - name: Recursively change ownership of a directory
+       ansible.builtin.file:
+         path: "{{ homedir }}"
+         state: directory
+         recurse: yes
+         owner: "{{ username }}"
+         group: "{{ groupname }}"
+     - name: shell files
+       ansible.builtin.command: sudo sh -c 'ls /opt/tomcat/latest/bin/*.sh'
+       register: shell_files
+     - name: print the value
+       ansible.builtin.debug:
+        var: shell_files
+     - name: giving permission
+       ansible.builtin.file:
+         path: "{{ item }}"
+         owner: "{{ username }}"
+         group: "{{ groupname }}"
+         mode: "0751"
+       loop: "{{ shell_files.stdout_lines }}"
+    
+       
+
+
+       

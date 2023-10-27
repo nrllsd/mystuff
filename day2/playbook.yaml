@@ -1,0 +1,12 @@
+---
+ - name: day2
+   become: true 
+   hosts: all
+   tasks:
+     - name: install java
+       ansible.builtin.apt:
+         name:
+           - openjdk-17-jdk
+         update_cache: yes
+         state: present
+

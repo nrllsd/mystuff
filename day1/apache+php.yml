@@ -1,0 +1,103 @@
+---
+- name: try2
+  become: yes
+  hosts: all
+  tasks:
+    - name: installing
+      ansible.builtin.apt: 
+        name:
+          - apache2
+          - php
+          - libapache2-mod-php
+          - php-mysql
+        update_cache: yes
+        state: present
+    - name: coping the phpinfo into a file
+      ansible.builtin.copy:
+        dest: /var/www/html/info.php
+        src: info.php
+
+
+
+---
+- name: try3
+  become: yes
+  hosts: all
+  tasks:
+    - name: install apache2
+      ansible.builtin.apt: 
+        name:
+          - apache2
+        state: prestent
+        update_cache: yes
+        
+
+---
+- name: installing apache2
+  become: yes
+  hosts: all
+  tasks:
+    - name: install apache
+      ansible.builtin.apt: 
+        name:
+          - apache2
+        state: prestent
+        update_cache: yes
+
+
+
+
+---
+- name: on redhat
+  become: yes
+  hosts: all
+  tasks:
+    - name: installing apache and php on redhat
+      ansible.builtin.dnf:
+        name:
+          - httpd
+          - php 
+          - php-cli
+          - php-common 
+      update_cache : yes
+      state: present
+    - name: copying php
+      ansible.builtin.copy: 
+        dest: /var/www/html/info.php
+        src: info.php
+    - name: service start
+      ansible.builtin.service:
+        name: httpd 
+        state: started
+        enabled: yes
+  
+
+
+
+---
+ 
+  sudo dnf install httpd
+  sudo systemctl start httpd 
+sudo systemctl enable httpd 
+---
+- name: installing  apache
+  become: yes
+  hosts: all
+  tasks: 
+    - name: install httpd
+      ansible.builtin.dnf:
+        name:
+          - httpd
+          - php
+          - php-cli
+          - php-common
+        state: present
+    - name: create info.php
+      ansible.builtin.copy:
+        content: '<?php phpinfo(); ?>'
+        dest: /var/www/html/info.php
+    - name: ensure httpd is running
+      ansible.builtin.service:
+        name: httpd
+        enabled: yes
+        state: started

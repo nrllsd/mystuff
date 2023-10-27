@@ -1,0 +1,39 @@
+---
+ - name: tomcat installation
+   become: yes
+   hosts: all
+   vars:
+     java-version: 11
+     group-name: tomcat
+     user-name: tomcat
+     homedir: /opt/tomcat
+     
+     
+   tasks:
+     - name: installing tomcat
+       ansible.builtin.apt:
+         name: "openjdk-{{ java-version }}-jdk" 
+         update_cache: yes
+         state: present
+     - name: creating group
+       ansible.builtin.group:
+         name: "{{ group-name }}"
+         state: present
+     - name: creating user into group tomcat
+       ansible.builtin.user:
+         name: "{{ user-name }}"
+         group:  "{{ group-name }}"
+         create_home: true
+         home: "{{ homedir }}"
+         shell: /bin/false
+     - name: downloading tomcat
+       ansible.builtin.get_url:
+         dest: "{{ homedir }}"
+         url: "https://downloads.apache.org/tomcat/tomcat-10/v10.1.10/bin/apache-tomcat-10.1.10.tar.gz"
+     - name: untar the file
+       ansible.builtin.unarchive:
+         src: "{{ homedir }}/bin/apache-tomcat-10.1.10.tar.gz"
+         dest: "{{ homedir }}"
+
+
+        
